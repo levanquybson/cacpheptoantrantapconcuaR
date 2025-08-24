@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phép toán trên tập con của ℝ </title>
+<style>
+body { font-family: Arial, sans-serif; background:#f0f0f0; padding:20px; }
+h2 { margin-bottom:20px; }
+.flex-container { display:flex; gap:20px; }
+.left-panel { flex:1; display:flex; flex-direction:column; gap:15px; }
+.right-panel { flex:2; display:flex; flex-direction:column; gap:15px; }
+.set-div { display:flex; align-items:center; gap:10px; }
+.set-label { min-width:60px; }
+input, select, button { padding:5px; font-size:16px; }
+canvas { border:1px solid #ccc; background:#fff; width:100%; }
+#result-container { margin-top:10px; padding:8px; background:#e0ffe0; border:1px solid #0a0; font-family:monospace; }
+
+
+
+/* Nhóm nút */
+.btn-group {
+  margin-bottom: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Style chung cho nút */
+button.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* Nút Reset */
+.btn-reset {
+  background: #f44336;
+  color: white;
+}
+.btn-reset:hover {
+  background: #d32f2f;
+}
+
+/* Nút Thêm tập */
+.btn-add {
+  background: #4caf50;
+  color: white;
+}
+.btn-add:hover {
+  background: #388e3c;
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #ff5722, #673ab7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+h3 {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #0d47a1; /* xanh đậm */
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+.note {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1b5e20; /* xanh đậm */
+  margin-bottom: 10px;
+}
+</style>
+<style>
+    #credit{
+      display:block;
+      text-align:center;   /* căn giữa ngang */
+      font-weight:bold;
+      color:green;
+      margin-top:20px;
+      user-select:none;
+    }
+  
+
+body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      background: #f0f0f0;
+      color: #333;
+      border-top: 1px solid #ccc;
+
+      /* chống copy / bôi đen */
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+
+</style>
+</head>
+<body>
+
+<center><h2>LUYỆN TẬP VỚI CÁC PHÉP TOÁN TRÊN TẬP CON CỦA ℝ</h2></center>
+
+<p style="color:#2196f3; font-weight:600; margin:6px 0; text-align:center;">
+ - Cách duy nhất để học toán là làm toán-(Paul Halmos:1916 – 2006)
+ </p>
+
+
+
+
+
+<span id="credit" style="user-select:none;"></span>
+
+<p class="note">1. Bạn nhập tập hợp vào bên dưới :[a,b), (a,+vc),...</p>
+
+
+
+<div class="flex-container">
+  <div class="left-panel">
+    <div id="sets-container">
+      <div class="set-div" data-id="0">
+        <label class="set-label">Tập 1 <input type="text" class="set-input" placeholder="(-vc,3) ∪ [5,+vc)"></label>
+      </div>
+    </div>
+
+   
+   <!-- Nút Reset và Thêm tập -->
+<div class="btn-group">
+  <button id="add-set" class="btn btn-add">Thêm tập</button>
+<button id="reset-all" class="btn btn-reset">Reset</button>
+  
+</div>
+
+
+    <!-- Phép toán trên cùng 1 hàng -->
+    <div style="display:flex; align-items:center; gap:10px;">
+<p class="note">2. Phép toán </p>
+      <select id="operation">
+        <option value="..">Chọn phép toán</option>
+        <option value="union">Hợp (∪)</option>
+        <option value="intersection">Giao (∩)</option>
+        <option value="difference">Hiệu (\)</option>
+        <option value="complement">Phần bù của tập 1 trong R</option>
+      </select>
+    </div>
+
+
+
+   <p class="note">3. Giới hạn trục số</p>
+    <!-- Giới hạn trục số nằm trên 1 hàng -->
+    <div id="axis-container" style="display:flex; gap:10px; align-items:center;">
+      <label>Min: <input type="text" id="axis-min" placeholder="Tự động"></label>
+      <label>Max: <input type="text" id="axis-max" placeholder="Tự động"></label>
+    </div>
+
+    <div id="result-container"><p class="note"> 4.Kết quả: </p> </div>
+  </div>
+
+  <div class="right-panel">
+    <canvas id="visual-canvas"></canvas>
+  </div>
+</div>
+
+<script>
+let setCount = 1;
+
+// --- Phân tích chuỗi khoảng ---
+function parseInterval(str){
+  str = str.trim();
+  const parts = str.split('∪').map(s=>s.trim());
+  const intervals = [];
+  for(const p of parts){
+    const match = p.match(/^(\[|\()([-\d.]+|-vc|Infinity),([-\d.]+|\+vc|Infinity)(\]|\))$/);
+    if(!match) continue;
+    let startStr = match[2], endStr = match[3];
+    intervals.push({
+      start: startStr==='-vc' ? -Infinity : parseFloat(startStr),
+      end: endStr==='+vc' ? Infinity : parseFloat(endStr),
+      leftOpen: match[1]==='(',
+      rightOpen: match[4]===')'
+    });
+  }
+  return intervals;
+}
+
+// --- Merge khoảng ---
+
+
+
+
+function mergeIntervals(intervals){
+  if(intervals.length===0) return [];
+  let copyIntervals = intervals.map(i=>({...i}));
+  copyIntervals.sort((a,b)=>a.start-b.start || (a.leftOpen?1:0)-(b.leftOpen?1:0));
+  let res=[copyIntervals[0]];
+  for(let i=1;i<copyIntervals.length;i++){
+    let last=res[res.length-1], curr=copyIntervals[i];
+    if(curr.start>last.end || (curr.start===last.end && (curr.leftOpen || last.rightOpen))){
+      res.push(curr);
+    } else {
+      last.end = Math.max(last.end,curr.end);
+      last.rightOpen = curr.end>last.end ? curr.rightOpen : last.rightOpen;
+    }
+  }
+  return res;
+}
+
+// --- Giao, Hiệu, Phần bù ---
+function intersectIntervals(a,b){
+  const s=Math.max(a.start,b.start);
+  const e=Math.min(a.end,b.end);
+  if(s<e || (s===e && !a.leftOpen && !b.leftOpen && !a.rightOpen && !b.rightOpen)){
+    return [{start:s,end:e,leftOpen:a.start===s?a.leftOpen:b.leftOpen,rightOpen:a.end===e?a.rightOpen:b.rightOpen}];
+  }
+  return [];
+}
+
+function differenceIntervals(a,b){
+  let res=[];
+  if(b.start<=a.start && b.end>=a.end) return [];
+  if(b.start>=a.end || b.end<=a.start) return [{...a}];
+  if(a.start<b.start) res.push({start:a.start,end:b.start,leftOpen:a.leftOpen,rightOpen:!b.leftOpen});
+  if(a.end>b.end) res.push({start:b.end,end:a.end,leftOpen:!b.rightOpen,rightOpen:a.rightOpen});
+  return res;
+}
+
+function unionIntervalsLists(lists){
+  let all=[]; lists.forEach(arr => all.push(...arr.map(i=>({...i}))));
+  return mergeIntervals(all);
+}
+
+function intersectIntervalsLists(aList,bList){
+  let res=[]; aList.forEach(a=>bList.forEach(b=>res.push(...intersectIntervals(a,b))));
+  return mergeIntervals(res);
+}
+
+function differenceIntervalsLists(aList,bList){
+  let res = aList.map(i=>({...i}));
+  bList.forEach(b=>{ let temp=[]; res.forEach(a=>temp.push(...differenceIntervals(a,b))); res=temp; });
+  return res;
+}
+
+function computeOperation(sets, op){
+  const listOfIntervals = sets.map(s=>s.intervals.map(i=>({...i})));
+  if(op==='union') return unionIntervalsLists(listOfIntervals);
+  if(op==='intersection'){ let res=listOfIntervals[0]||[]; for(let i=1;i<listOfIntervals.length;i++) res=intersectIntervalsLists(res,listOfIntervals[i]); return res; }
+  if(op==='difference'){ let res=listOfIntervals[0]||[]; for(let i=1;i<listOfIntervals.length;i++) res=differenceIntervalsLists(res,listOfIntervals[i]); return res; }
+  if(op==='complement'){ const full=[{start:-Infinity,end:Infinity,leftOpen:true,rightOpen:true}]; return differenceIntervalsLists(full,listOfIntervals[0]||[]);}
+  return [];
+}
+
+// --- Hiển thị ---
+function intervalToText(i){
+  const startText = i.start===-Infinity?'-vc':i.start;
+  const endText = i.end===Infinity?'+vc':i.end;
+  const leftSymbol = i.leftOpen?'(':'[';
+  const rightSymbol = i.rightOpen?')':']';
+  return {startText,endText,leftSymbol,rightSymbol};
+}
+
+function drawAxis(ctx,min,max,y){
+  const width=ctx.canvas.width;
+  ctx.beginPath(); ctx.moveTo(10,y); ctx.lineTo(width-10,y); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(width-10,y); ctx.lineTo(width-20,y-7); ctx.lineTo(width-20,y+7); ctx.lineTo(width-10,y); ctx.fillStyle='#000'; ctx.fill();
+  ctx.fillStyle='#000'; ctx.font='12px Arial';
+  ctx.fillText(min===-Infinity?'-vc':min,10,y-10);
+  ctx.fillText(max===Infinity?'+vc':max,width-30,y-10);
+}
+
+function drawExclusion(ctx,xStart,xEnd,yStart,yHeight){
+  ctx.strokeStyle='red'; ctx.lineWidth=2;
+  const spacing=6,yCenter=yStart+yHeight/2,short=yHeight/4;
+  for(let x=xStart;x<xEnd;x+=spacing){ ctx.beginPath(); ctx.moveTo(x,yCenter-short); ctx.lineTo(x+2,yCenter+short); ctx.stroke(); }
+}
+
+function drawIntervals(intervals,ctx,min,max,fillHeight=40,yStart=30){
+  const width=ctx.canvas.width; drawAxis(ctx,min,max,yStart+fillHeight/2);
+  const scale=(width-20)/(max-min); let prevX=10;
+  intervals.forEach(i=>{
+    const x1=isFinite(i.start)?10+(i.start-min)*scale:10;
+    const x2=isFinite(i.end)?10+(i.end-min)*scale:width-10;
+    if(x1>prevX) drawExclusion(ctx,prevX,x1,yStart,fillHeight);
+    const info=intervalToText(i);
+    ctx.fillStyle='#008000'; ctx.font='bold 20px Arial';
+    ctx.fillText(info.leftSymbol,x1-8,yStart+fillHeight/2+7); ctx.fillText(info.rightSymbol,x2-8,yStart+fillHeight/2+7);
+    ctx.fillStyle='#000'; ctx.font='12px Arial';
+    ctx.fillText(info.startText,x1-10,yStart+fillHeight/2-7); ctx.fillText(info.endText,x2-10,yStart+fillHeight/2-7);
+    prevX=x2;
+  });
+  if(prevX<ctx.canvas.width-10) drawExclusion(ctx,prevX,ctx.canvas.width-10,yStart,fillHeight);
+}
+
+function getIntervals(){
+  const divs=document.querySelectorAll('.set-div'); const sets=[];
+  divs.forEach(d=>{ const val=d.querySelector('.set-input').value; const intervals=parseInterval(val); if(intervals.length>0) sets.push({intervals}); });
+  return sets;
+}
+
+function intervalsToString(intervals){
+  if(intervals.length===0) return '∅';
+  return intervals.map(i=>{ const info=intervalToText(i); return `${info.leftSymbol}${info.startText},${info.endText}${info.rightSymbol}`; }).join(' ∪ ');
+}
+
+// --- Compute & Draw ---
+function compute(){
+  const sets=getIntervals(); 
+  if(sets.length===0) return;
+  const op=document.getElementById('operation').value;
+  
+  // --- Tính kết quả nếu đã chọn phép toán ---
+  let resIntervals=[];
+  const hasOperation = op!=='..';
+  if(hasOperation){
+    resIntervals = computeOperation(sets,op);
+  }
+
+  let allVals=[]; 
+  sets.forEach(s=>s.intervals.forEach(i=>{ 
+    if(isFinite(i.start)) allVals.push(i.start); 
+    if(isFinite(i.end)) allVals.push(i.end); 
+  }));
+
+  let minInput=document.getElementById('axis-min').value.trim(), maxInput=document.getElementById('axis-max').value.trim();
+  const min = minInput?parseFloat(minInput):Math.min(...allVals,-10);
+  const max = maxInput?parseFloat(maxInput):Math.max(...allVals,10);
+
+  const rowHeight=50;
+  const canvas=document.getElementById('visual-canvas'); 
+  canvas.height=(sets.length+(hasOperation?1:0))*rowHeight+20;
+  const ctx=canvas.getContext('2d'); 
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  let y=10; 
+  sets.forEach(s=>{
+    drawIntervals(s.intervals,ctx,min,max,30,y); 
+    y+=rowHeight; 
+  });
+
+  if(hasOperation){
+    drawIntervals(resIntervals,ctx,min,max,40,y);
+    document.getElementById('result-container').innerText='Kết quả: '+intervalsToString(resIntervals);
+  } else {
+    document.getElementById('result-container').innerText='Kết quả: ';
+  }
+}
+
+// --- Events ---
+document.getElementById('add-set').onclick=()=>{
+  setCount++;
+  const div=document.createElement('div');
+  div.className='set-div';
+  div.setAttribute('data-id',setCount-1);
+  div.innerHTML=`<label class="set-label">Tập ${setCount}: <input type="text" class="set-input" placeholder="(-vc,+vc)"></label>`;
+  document.getElementById('sets-container').appendChild(div);
+  div.querySelector('.set-input').addEventListener('input',()=>compute());
+};
+
+document.getElementById('reset-all').onclick = () => {
+  // Xóa tất cả tập và tạo lại tập 1 mặc định
+  document.getElementById('sets-container').innerHTML = `
+    <div class="set-div" data-id="0">
+      <label class="set-label">Tập 1 <input type="text" class="set-input" placeholder="(-vc,3) ∪ [5,+vc)"></label>
+    </div>
+  `;
+  document.getElementById('operation').value = '..';
+  document.getElementById('axis-min').value = '';
+  document.getElementById('axis-max').value = '';
+  setCount = 1;
+  document.querySelectorAll('.set-input').forEach(input=>input.addEventListener('input',()=>compute()));
+
+  // 🆕 Xóa canvas
+  const canvas = document.getElementById('visual-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Xóa kết quả hiển thị
+  document.getElementById("result-text").textContent = "";
+
+  compute();
+};
+
+
+
+
+document.querySelectorAll('.set-input').forEach(input=>input.addEventListener('input',()=>compute()));
+document.getElementById('operation').addEventListener('change',()=>compute());
+document.getElementById('axis-min').addEventListener('input',()=>compute());
+document.getElementById('axis-max').addEventListener('input',()=>compute());
+
+compute();
+</script>
+
+
+<meta charset="UTF-8">
+<footer id="copyright"></footer>
+
+<script>
+  // Base64 đúng (chữ Quý)
+  const b64Copyright = "wqkgMjAyNSBMw6ogVsSDbiBRdcO9K0dQVC4gQWxsIHJpZ2h0cyByZXNlcnZlZC4=";
+
+  const bytes = Uint8Array.from(atob(b64Copyright), c => c.charCodeAt(0));
+  const text  = new TextDecoder("utf-8").decode(bytes);
+
+  // Kiểm tra nhanh trên console: phải in đúng "© 2025 Lê Văn Quý+GPT. All rights reserved."
+  console.log(text);
+
+  document.getElementById("copyright").textContent = text;
+
+  // (tuỳ chọn) chặn chuột phải & Ctrl+C như bạn đã làm
+  document.addEventListener("contextmenu", e => e.preventDefault());
+  document.addEventListener("keydown", e => {
+    if (e.ctrlKey && e.key.toLowerCase() === "c") {
+      e.preventDefault();
+      alert("!");
+    }
+  });
+</script>
+
+
+</body>
+
+
+
+</html>
