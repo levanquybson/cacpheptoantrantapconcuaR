@@ -1,97 +1,33 @@
-
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phép toán trên tập con của ℝ </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Phép toán trên tập con của ℝ</title>
 <style>
-body { font-family: Arial, sans-serif; background:#f0f0f0; padding:20px; }
+body { font-family: Arial, sans-serif; background:#f0f0f0; padding:20px; margin:0; }
 h2 { margin-bottom:20px; }
-.flex-container { display:flex; gap:20px; }
-.left-panel { flex:1; display:flex; flex-direction:column; gap:15px; }
-.right-panel { flex:2; display:flex; flex-direction:column; gap:15px; }
+.flex-container { display:flex; gap:20px; flex-wrap:wrap; }
+.left-panel { flex:1; display:flex; flex-direction:column; gap:15px; min-width:250px; }
+.right-panel { flex:2; display:flex; flex-direction:column; gap:15px; min-width:250px; }
 .set-div { display:flex; align-items:center; gap:10px; }
 .set-label { min-width:60px; }
 input, select, button { padding:5px; font-size:16px; }
-canvas { border:1px solid #ccc; background:#fff; width:100%; }
+canvas { border:1px solid #ccc; background:#fff; width:100%; display:block; }
 #result-container { margin-top:10px; padding:8px; background:#e0ffe0; border:1px solid #0a0; font-family:monospace; }
 
-
-
 /* Nhóm nút */
-.btn-group {
-  margin-bottom: 15px;
-  display: flex;
-  gap: 10px;
-}
+.btn-group { margin-bottom: 15px; display: flex; gap: 10px; flex-wrap:wrap; }
+button.btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.25s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+.btn-reset { background: #f44336; color: white; }
+.btn-reset:hover { background: #d32f2f; }
+.btn-add { background: #4caf50; color: white; }
+.btn-add:hover { background: #388e3c; }
 
-/* Style chung cho nút */
-button.btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-}
+h2 { font-size: 28px; font-weight: bold; text-align: center; margin-bottom: 20px; background: linear-gradient(90deg, #ff5722, #673ab7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+.note { font-size: 18px; font-weight: bold; color: #1b5e20; margin-bottom: 10px; }
+#credit { display:block; text-align:center; font-weight:bold; color:green; margin-top:20px; user-select:none; }
 
-/* Nút Reset */
-.btn-reset {
-  background: #f44336;
-  color: white;
-}
-.btn-reset:hover {
-  background: #d32f2f;
-}
-
-/* Nút Thêm tập */
-.btn-add {
-  background: #4caf50;
-  color: white;
-}
-.btn-add:hover {
-  background: #388e3c;
-}
-
-h2 {
-  font-size: 28px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
-  background: linear-gradient(90deg, #ff5722, #673ab7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-}
-h3 {
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
-  color: #0d47a1; /* xanh đậm */
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-}
-.note {
-  font-size: 18px;
-  font-weight: bold;
-  color: #1b5e20; /* xanh đậm */
-  margin-bottom: 10px;
-}
-</style>
-<style>
-    #credit{
-      display:block;
-      text-align:center;   /* căn giữa ngang */
-      font-weight:bold;
-      color:green;
-      margin-top:20px;
-      user-select:none;
-    }
-  
 
 body {
       margin: 0;
@@ -115,77 +51,59 @@ body {
       -ms-user-select: none;
     }
 
-
 </style>
 </head>
 <body>
 
 <center><h2>LUYỆN TẬP VỚI CÁC PHÉP TOÁN TRÊN TẬP CON CỦA ℝ</h2></center>
-
 <p style="color:#2196f3; font-weight:600; margin:6px 0; text-align:center;">
  - Cách duy nhất để học toán là làm toán-(Paul Halmos:1916 – 2006)
  </p>
-
-
-
-
-
-<span id="credit" style="user-select:none;"></span>
+<span id="credit"></span>
 
 <p class="note">1. Bạn nhập tập hợp vào bên dưới :[a,b), (a,+vc),...</p>
 
-
-
 <div class="flex-container">
-  <div class="left-panel">
-    <div id="sets-container">
-      <div class="set-div" data-id="0">
-        <label class="set-label">Tập 1 <input type="text" class="set-input" placeholder="(-vc,3) ∪ [5,+vc)"></label>
-      </div>
+<div class="left-panel">
+  <div id="sets-container">
+    <div class="set-div" data-id="0">
+      <label class="set-label">Tập 1 <input type="text" class="set-input" placeholder="(-vc,3) ∪ [5,+vc)"></label>
     </div>
+  </div>
 
-   
-   <!-- Nút Reset và Thêm tập -->
-<div class="btn-group">
-  <button id="add-set" class="btn btn-add">Thêm tập</button>
-<button id="reset-all" class="btn btn-reset">Reset</button>
-  
+  <div class="btn-group">
+    <button id="add-set" class="btn btn-add">Thêm tập</button>
+    <button id="reset-all" class="btn btn-reset">Reset</button>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:10px;">
+    <p class="note">2. Phép toán </p>
+    <select id="operation">
+      <option value="..">Chọn phép toán</option>
+      <option value="union">Hợp (∪)</option>
+      <option value="intersection">Giao (∩)</option>
+      <option value="difference">Hiệu (\)</option>
+      <option value="complement">Phần bù của tập 1 trong R</option>
+    </select>
+  </div>
+
+  <p class="note">3. Giới hạn trục số</p>
+  <div id="axis-container" style="display:flex; gap:10px; align-items:center;">
+    <label>Min: <input type="text" id="axis-min" placeholder="Tự động"></label>
+    <label>Max: <input type="text" id="axis-max" placeholder="Tự động"></label>
+  </div>
+
+  <div id="result-container"><p class="note">4.Kết quả: </p></div>
 </div>
 
-
-    <!-- Phép toán trên cùng 1 hàng -->
-    <div style="display:flex; align-items:center; gap:10px;">
-<p class="note">2. Phép toán </p>
-      <select id="operation">
-        <option value="..">Chọn phép toán</option>
-        <option value="union">Hợp (∪)</option>
-        <option value="intersection">Giao (∩)</option>
-        <option value="difference">Hiệu (\)</option>
-        <option value="complement">Phần bù của tập 1 trong R</option>
-      </select>
-    </div>
-
-
-
-   <p class="note">3. Giới hạn trục số</p>
-    <!-- Giới hạn trục số nằm trên 1 hàng -->
-    <div id="axis-container" style="display:flex; gap:10px; align-items:center;">
-      <label>Min: <input type="text" id="axis-min" placeholder="Tự động"></label>
-      <label>Max: <input type="text" id="axis-max" placeholder="Tự động"></label>
-    </div>
-
-    <div id="result-container"><p class="note"> 4.Kết quả: </p> </div>
-  </div>
-
-  <div class="right-panel">
-    <canvas id="visual-canvas"></canvas>
-  </div>
+<div class="right-panel">
+  <canvas id="visual-canvas"></canvas>
+</div>
 </div>
 
 <script>
+// --- Hàm xử lý tập ---
 let setCount = 1;
-
-// --- Phân tích chuỗi khoảng ---
 function parseInterval(str){
   str = str.trim();
   const parts = str.split('∪').map(s=>s.trim());
@@ -205,10 +123,6 @@ function parseInterval(str){
 }
 
 // --- Merge khoảng ---
-
-
-
-
 function mergeIntervals(intervals){
   if(intervals.length===0) return [];
   let copyIntervals = intervals.map(i=>({...i}));
@@ -365,50 +279,42 @@ function compute(){
   }
 }
 
+function resizeCanvasAndRedraw() {
+    requestAnimationFrame(() => compute());
+}
+
+window.addEventListener("load", resizeCanvasAndRedraw);
+window.addEventListener("resize", resizeCanvasAndRedraw);
+window.addEventListener("orientationchange", resizeCanvasAndRedraw);
+
 // --- Events ---
 document.getElementById('add-set').onclick=()=>{
   setCount++;
-  const div=document.createElement('div');
-  div.className='set-div';
-  div.setAttribute('data-id',setCount-1);
+  const div=document.createElement('div'); div.className='set-div'; div.setAttribute('data-id',setCount-1);
   div.innerHTML=`<label class="set-label">Tập ${setCount}: <input type="text" class="set-input" placeholder="(-vc,+vc)"></label>`;
   document.getElementById('sets-container').appendChild(div);
   div.querySelector('.set-input').addEventListener('input',()=>compute());
 };
-
 document.getElementById('reset-all').onclick = () => {
-  // Xóa tất cả tập và tạo lại tập 1 mặc định
   document.getElementById('sets-container').innerHTML = `
     <div class="set-div" data-id="0">
       <label class="set-label">Tập 1 <input type="text" class="set-input" placeholder="(-vc,3) ∪ [5,+vc)"></label>
-    </div>
-  `;
+    </div>`;
   document.getElementById('operation').value = '..';
   document.getElementById('axis-min').value = '';
   document.getElementById('axis-max').value = '';
   setCount = 1;
   document.querySelectorAll('.set-input').forEach(input=>input.addEventListener('input',()=>compute()));
-
-  // 🆕 Xóa canvas
-  const canvas = document.getElementById('visual-canvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Xóa kết quả hiển thị
-  document.getElementById("result-text").textContent = "";
-
   compute();
 };
-
-
-
-
 document.querySelectorAll('.set-input').forEach(input=>input.addEventListener('input',()=>compute()));
 document.getElementById('operation').addEventListener('change',()=>compute());
 document.getElementById('axis-min').addEventListener('input',()=>compute());
 document.getElementById('axis-max').addEventListener('input',()=>compute());
 
 compute();
+</script>
+
 </script>
 
 
@@ -436,10 +342,5 @@ compute();
     }
   });
 </script>
-
-
 </body>
-
-
-
 </html>
